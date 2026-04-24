@@ -1,6 +1,6 @@
 # Melanson-simple-ai-examples
 
-Concise AI implementation case studies by Mark Melanson (Finance & Operations). Each PDF documents a real, live-use workflow built and operated solo — AI used for leverage, deterministic logic where audit integrity matters.
+Concise AI and automation implementation case studies by Mark Melanson (Finance & Operations). Each PDF documents a real, live-use workflow built and operated solo — AI used for leverage, deterministic logic where audit integrity matters. One case (Case 04) predates current LLM tooling and is included as an automation example that shows the underlying process architecture.
 
 ---
 
@@ -81,6 +81,34 @@ A reusable Claude Code / Codex Skill that spawns subagents to parse client tax f
 
 ---
 
+### Case 04 — Yardi-Argus Model Bridge: GL Actuals + Argus Forecasts → One AM Model
+
+**File:** `Mark Melanson Automation Example - GL to structured model data.pdf`
+
+A reusable Excel / Power Query architecture that turns Yardi GL exports and Argus cash-flow forecasts into a single monthly actual-to-forecast model for CRE asset management. Improved short-to-medium-term distribution forecasting, supported longer-term IRR time-series analysis, and let AM drill into structured GL detail without routine accounting pulls. Built before current LLM tools — included as the pre-AI automation baseline the later AI cases build on.
+
+| | |
+|---|---|
+| **Stack** | Excel · Power Query M · Power Pivot / Data Model · Yardi GL exports · Argus cash-flow exports |
+| **Scope** | 20 investor-facing AM models in 6 months · 30 in 12 months · GL transformation usable across 70+ portfolio properties |
+| **Users** | 4+ AM users · SVP / CFO / executive team · summarized externally for JV partners |
+| **Before** | ~80–90 min manual GL-period + Argus refresh (6 steps) |
+| **After** | ~2–3 min configured refresh (4 steps) · 6–12 month cash reforecast in ~10–15 min vs. ~2.5 hrs |
+| **Decision-support impact** | ~$800K lower JV partner fund-level capital calls in a Q4 2025 example vs. forward-only modeling |
+
+**What was built:**
+- Power Query pipeline: folder ingestion, header cleanup, debit/credit sign normalization, GL-COA ↔ Argus-COA mapping, appended actual / forecast / debt rows into one normalized dataset
+- Side-by-side actual-to-forecast monthly view with transaction-level NOI and capex drill-down retained behind summary rows
+- Cash / NWC / debt-service distribution-capacity logic (current cash + prior cash flow − minimum reserve − near-term capex/TI/LC − scheduled debt service − NWC burn-off)
+- Controls: cash tie-out to Yardi, T6 NOI tie-out, refresh sequencing, period-filter review, human review before internal decisions or external JV summaries
+- Sharing boundary: full drill-down workbooks used internally only; investor-facing JV outputs used summarized Excel views
+
+**Workflow:** Drop Yardi GL + Argus exports into property folders → Power Query refresh (ingest, clean, normalize, map, append) → review controls (cash tie-out, T6 NOI, period filters) → single model output feeds AM review, leadership, and JV summaries
+
+**Known improvement areas:** Refresh behavior and period-filter handling could be cleaner; a modern rebuild could use a more formal data layer with AI-assisted documentation and testing around the same finance logic.
+
+---
+
 ## Common Theme
 
-All three workflows follow the same pattern: **AI for leverage at specific seams, deterministic code / formulas for audit integrity.** No workflow auto-posts, auto-files, or auto-delivers — human review gates every output before it reaches a client, ERP, or stakeholder.
+All four workflows follow the same pattern: **leverage at specific seams, deterministic code / formulas for audit integrity.** No workflow auto-posts, auto-files, or auto-delivers — human review gates every output before it reaches a client, ERP, or stakeholder. Cases 02, 03, and the Lease Abstract pipeline use current LLM tooling for extraction and review; Case 04 shows the pre-LLM Excel / Power Query architecture that established the pattern.
